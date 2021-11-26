@@ -34,6 +34,8 @@ namespace ProxetTournamentFinale
             services.AddDbContext<PlayersContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("PlayersContext")));
 
+            services.AddScoped<IPlayersContext, PlayersContext>();
+
             services.AddHealthChecks().AddDbContextCheck<PlayersContext>();
         }
 

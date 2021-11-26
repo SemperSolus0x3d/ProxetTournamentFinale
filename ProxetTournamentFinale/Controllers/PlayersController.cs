@@ -14,9 +14,9 @@ namespace ProxetTournamentFinale.Controllers
     [ApiController]
     public class PlayersController : ControllerBase
     {
-        private readonly PlayersContext _context;
+        private readonly IPlayersContext _context;
 
-        public PlayersController(PlayersContext context)
+        public PlayersController(IPlayersContext context)
         {
             _context = context;
         }

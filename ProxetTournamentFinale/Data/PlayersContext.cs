@@ -7,7 +7,7 @@ using ProxetTournamentFinale.Models;
 
 namespace ProxetTournamentFinale.Data
 {
-    public class PlayersContext : DbContext
+    public class PlayersContext : DbContext, IPlayersContext
     {
         public PlayersContext (DbContextOptions<PlayersContext> options)
             : base(options)
@@ -15,5 +15,7 @@ namespace ProxetTournamentFinale.Data
         }
 
         public DbSet<Player> Players { get; set; }
+
+        public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
     }
 }
