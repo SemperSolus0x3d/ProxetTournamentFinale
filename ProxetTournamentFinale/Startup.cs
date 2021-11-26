@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using ProxetTournamentFinale.Data;
 
 namespace ProxetTournamentFinale
@@ -31,6 +33,8 @@ namespace ProxetTournamentFinale
 
             services.AddDbContext<PlayersContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("PlayersContext")));
+
+            services.AddHealthChecks().AddDbContextCheck<PlayersContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +54,7 @@ namespace ProxetTournamentFinale
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/api/v1/healthcheck");
             });
         }
     }
