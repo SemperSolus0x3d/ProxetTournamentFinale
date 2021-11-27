@@ -26,20 +26,21 @@ namespace ProxetTournamentFinale
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
+            // Add database context
             services.AddDbContext<PlayersContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("PlayersContext")));
 
+            // Map PlayersContext to IPlayersContext
             services.AddScoped<IPlayersContext, PlayersContext>();
 
+            // Add database health check
             services.AddHealthChecks().AddDbContextCheck<PlayersContext>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -56,6 +57,8 @@ namespace ProxetTournamentFinale
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // Map health checks to /api/v1/healthcheck endpoint
                 endpoints.MapHealthChecks("/api/v1/healthcheck");
             });
         }

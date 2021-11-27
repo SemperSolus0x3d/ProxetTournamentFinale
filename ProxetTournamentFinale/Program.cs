@@ -15,8 +15,10 @@ namespace ProxetTournamentFinale
     {
         public static void Main(string[] args)
         {
+            // Build host
             var app = CreateHostBuilder(args).Build();
 
+            // Ensure that database exists
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -25,6 +27,7 @@ namespace ProxetTournamentFinale
                 dbContext.Database.EnsureCreated();
             }
 
+            // Run host
             app.Run();
         }
 
