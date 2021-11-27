@@ -6,5 +6,11 @@ namespace ProxetTournamentFinale.Responses
     {
         public PlayerDto[] FirstTeam { get; set; }
         public PlayerDto[] SecondTeam { get; set; }
+
+        public GenerateTeamsResponse(PlayerDto[] team1, PlayerDto[] team2)
+        {
+            FirstTeam = team1;
+            SecondTeam = team2;
+        }
     }
 }
