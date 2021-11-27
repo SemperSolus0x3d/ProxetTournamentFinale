@@ -28,9 +28,54 @@ namespace ProxetTournamentFinale.Controllers
         {
             try
             {
-                // TODO: Implement matchmaking algorithm
+                var playersDescending =
+                    _context.Players.OrderByDescending(p => p.EnqueueTime);
 
-                return Ok();
+                var chosenPlayers = new List<Player>[]
+                {
+                    new List<Player>(),
+                    new List<Player>(),
+                    new List<Player>()
+                };
+
+                for (int i = 0; i < 3; i++)
+                {
+                    chosenPlayers[i] = await playersDescending
+                        .Where(p => p.VehicleType == i + 1)
+                        .Take(6)
+                        .ToListAsync();
+
+                    _context.Players.RemoveRange(chosenPlayers[i]);
+                }
+
+                await _context.SaveChangesAsync();
+
+                var compiledTeams = new PlayerDto[][]
+                {
+                    new PlayerDto[9],
+                    new PlayerDto[9]
+                };
+
+                foreach (var team in compiledTeams)
+                {
+                    int teamMemberIndex = 0;
+
+                    for (int i = 0; i < 3; i++)
+                        for (int j = 0; j < 3; j++)
+                        {
+                            team[teamMemberIndex++] =
+                                new PlayerDto(chosenPlayers[i][j]);
+
+                            chosenPlayers[i].RemoveAt(j);
+                        }
+                }
+
+                var response = new GenerateTeamsResponse(
+                    compiledTeams[0],
+                    compiledTeams[1]
+                );
+
+                return Ok(response);
             }
             catch
             {
