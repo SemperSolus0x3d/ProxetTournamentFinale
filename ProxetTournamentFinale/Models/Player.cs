@@ -14,6 +14,8 @@ namespace ProxetTournamentFinale.Models
 
         public DateTime EnqueueTime { get; set; }
 
+        public Player() { }
+
         public Player(PlayerDto dto)
         {
             // As far as I know,
