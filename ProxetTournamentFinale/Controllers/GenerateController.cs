@@ -31,48 +31,27 @@ namespace ProxetTournamentFinale.Controllers
                 var playersDescending =
                     _context.Players.OrderByDescending(p => p.EnqueueTime);
 
-                var chosenPlayers = new List<Player>[]
-                {
-                    new List<Player>(),
-                    new List<Player>(),
-                    new List<Player>()
-                };
+                var chosenPlayers = playersDescending
+                    .GroupBy(p => p.VehicleType)
+                    .ToList()
+                    .Select(g => g.Take(6).ToList());
 
-                for (int i = 0; i < 3; i++)
-                {
-                    chosenPlayers[i] = await playersDescending
-                        .Where(p => p.VehicleType == i + 1)
-                        .Take(6)
-                        .ToListAsync();
+                var team1 = new List<Player>();
+                var team2 = new List<Player>();
 
-                    _context.Players.RemoveRange(chosenPlayers[i]);
+                foreach (var list in chosenPlayers)
+                {
+                    team1.AddRange(list.Take(3));
+                    team2.AddRange(list.Skip(3));
+
+                    _context.Players.RemoveRange(list);
                 }
 
                 await _context.SaveChangesAsync();
 
-                var compiledTeams = new PlayerDto[][]
-                {
-                    new PlayerDto[9],
-                    new PlayerDto[9]
-                };
-
-                foreach (var team in compiledTeams)
-                {
-                    int teamMemberIndex = 0;
-
-                    for (int i = 0; i < 3; i++)
-                        for (int j = 0; j < 3; j++)
-                        {
-                            team[teamMemberIndex++] =
-                                new PlayerDto(chosenPlayers[i][j]);
-
-                            chosenPlayers[i].RemoveAt(j);
-                        }
-                }
-
                 var response = new GenerateTeamsResponse(
-                    compiledTeams[0],
-                    compiledTeams[1]
+                    team1.Select(p => new PlayerDto(p)).ToArray(), 
+                    team2.Select(p => new PlayerDto(p)).ToArray()
                 );
 
                 return Ok(response);
